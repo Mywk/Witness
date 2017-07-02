@@ -17,7 +17,7 @@ namespace WITNESS
             {
                 public enum Defaults
                 {
-                    TV = 17,
+                    TV = 22,
                     Monitors = 27
                 }
 
@@ -44,10 +44,10 @@ namespace WITNESS
             {
                 switch (id)
                 {
-                    case 0:
+                    case 1:
                         pin = OpenPin(ref GpioPins.Power.TV, (int)GpioPins.Power.Defaults.TV);
                         break;
-                    case 1:
+                    case 2:
                         pin = OpenPin(ref GpioPins.Power.Monitors, (int)GpioPins.Power.Defaults.Monitors);
                         break;
                     default:

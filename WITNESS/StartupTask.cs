@@ -11,6 +11,8 @@ using Restup.Webserver.Models.Contracts;
 using Restup.Webserver.Http;
 using Restup.Webserver.File;
 using Windows.Devices.Gpio;
+using SQLite;
+using System.IO;
 
 // The Background Application template is documented at http://go.microsoft.com/fwlink/?LinkID=533884&clcid=0x409
 
@@ -25,7 +27,8 @@ namespace WITNESS
             _Deferral = taskInstance.GetDeferral();
 
             var restRouteHandler = new RestRouteHandler();
-            restRouteHandler.RegisterController<ParameterController>();
+            restRouteHandler.RegisterController<RestControllers.Query>();
+            restRouteHandler.RegisterController<RestControllers.Power>();
 
             var configuration = new HttpServerConfiguration()
               .ListenOnPort(81)
@@ -36,23 +39,10 @@ namespace WITNESS
             var httpServer = new HttpServer(configuration);
             await httpServer.StartServerAsync();
             GpioControlCenter.Active = new GpioControlCenter();
+
+            Database.Active = new Database();
         }
 
-    }
-
-
-    [RestController(InstanceCreationType.Singleton)]
-    public sealed class ParameterController
-    {
-        [UriFormat("/power/{id}/{status}")]
-        public IGetResponse GetPower(int id, bool status)
-        {
-            if (GpioControlCenter.Active.SetPower(id, status))
-                return new GetResponse(
-      GetResponse.ResponseStatus.OK, new List<string> { id.ToString(), status.ToString() });
-            else
-                return new GetResponse(GetResponse.ResponseStatus.NotFound, null);
-        }
     }
 
 }
