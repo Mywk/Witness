@@ -1,0 +1,234 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Witness - Control Panel</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <link href="css/metro.css" rel="stylesheet" />
+    <link href="css/metro-icons.css" rel="stylesheet" />
+    <link href="css/metro-responsive.css" rel="stylesheet" />
+
+    <link href="css/datatables.css" rel="stylesheet" />
+
+    <script data-main="scripts/main" src="js/jquery.js"></script>
+    <script src="js/dataTables.js"></script>
+
+    <script src="js/metro.js"></script>
+
+    <script>
+    function pushMessage(t) {
+        var mes = 'Info|Implement independently';
+        $.Notify({
+            caption: mes.split("|")[0],
+            content: mes.split("|")[1],
+            type: t
+        });
+    };
+
+    $(function () {
+        $('.sidebar').on('click', 'li', function () {
+            if (!$(this).hasClass('active')) {
+                $('.sidebar li').removeClass('active');
+                $(this).addClass('active');
+            }
+        })
+    });
+
+
+
+    function showCharms(id){
+    var  charm = $(id).data("charm");
+    if (charm.element.data("opened") === true) {
+        charm.close();
+    } else {
+        charm.open();
+    }
+    }
+
+        $(function(){
+            var current_tile_area_scheme = localStorage.getItem('tile-area-scheme') || "tile-area-scheme-dark";
+            $(".special-tile-area").removeClass (function (index, css) {
+                return (css.match (/(^|\s)tile-area-scheme-\S+/g) || []).join(' ');
+            }).addClass(current_tile_area_scheme);
+
+            $(".schemeButtons .button").hover(
+                    function(){
+                        var b = $(this);
+                        var scheme = "tile-area-scheme-" +  b.data('scheme');
+                        $(".special-tile-area").removeClass (function (index, css) {
+                            return (css.match (/(^|\s)tile-area-scheme-\S+/g) || []).join(' ');
+                        }).addClass(scheme);
+                    },
+                    function(){
+                        $(".special-tile-area").removeClass (function (index, css) {
+                            return (css.match (/(^|\s)tile-area-scheme-\S+/g) || []).join(' ');
+                        }).addClass(current_tile_area_scheme);
+                    }
+            );
+
+            $(".schemeButtons .button").on("click", function(){
+                var b = $(this);
+                var scheme = "tile-area-scheme-" +  b.data('scheme');
+
+                $(".special-tile-area").removeClass (function (index, css) {
+                    return (css.match (/(^|\s)tile-area-scheme-\S+/g) || []).join(' ');
+                }).addClass(scheme);
+
+                current_tile_area_scheme = scheme;
+                localStorage.setItem('tile-area-scheme', scheme);
+            });
+        });
+
+           $(function(){
+               $('#view').load("views/power.html");
+           });
+
+
+    </script>
+
+
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        body {
+        }
+
+        .page-content {
+            padding-top: 3.125rem;
+            min-height: 100%;
+            height: 100%;
+        }
+
+        .table .input-control.checkbox {
+            line-height: 1;
+            min-height: 0;
+            height: auto;
+        }
+
+        @media screen and (max-width: 800px) {
+            #cell-sidebar {
+                flex-basis: 52px;
+            }
+
+            #cell-content {
+                flex-basis: calc(100% - 52px);
+            }
+        }
+    </style>
+
+</head>
+
+<body class="bg-steel">
+
+    <div data-role="charm" id="charmSettings" data-position="top" class="charm top-side" style="opacity: 1; display: none; top: -146px; bottom: auto; left: 0px; right: 0px;">
+        <h1 class="text-light">Settings</h1>
+        <hr class="thin">
+        <br/>
+        <div class="schemeButtons">
+            <div class="button square-button tile-area-scheme-dark" data-scheme="dark"></div>
+            <div class="button square-button tile-area-scheme-darkBrown" data-scheme="darkBrown"></div>
+            <div class="button square-button tile-area-scheme-darkCrimson" data-scheme="darkCrimson"></div>
+            <div class="button square-button tile-area-scheme-darkViolet" data-scheme="darkViolet"></div>
+            <div class="button square-button tile-area-scheme-darkMagenta" data-scheme="darkMagenta"></div>
+            <div class="button square-button tile-area-scheme-darkCyan" data-scheme="darkCyan"></div>
+            <div class="button square-button tile-area-scheme-darkCobalt" data-scheme="darkCobalt"></div>
+            <div class="button square-button tile-area-scheme-darkTeal" data-scheme="darkTeal"></div>
+            <div class="button square-button tile-area-scheme-darkEmerald" data-scheme="darkEmerald"></div>
+            <div class="button square-button tile-area-scheme-darkGreen" data-scheme="darkGreen"></div>
+            <div class="button square-button tile-area-scheme-darkOrange" data-scheme="darkOrange"></div>
+            <div class="button square-button tile-area-scheme-darkRed" data-scheme="darkRed"></div>
+            <div class="button square-button tile-area-scheme-darkPink" data-scheme="darkPink"></div>
+            <div class="button square-button tile-area-scheme-darkIndigo" data-scheme="darkIndigo"></div>
+            <div class="button square-button tile-area-scheme-darkBlue" data-scheme="darkBlue"></div>
+            <div class="button square-button tile-area-scheme-lightBlue" data-scheme="lightBlue"></div>
+            <div class="button square-button tile-area-scheme-lightTeal" data-scheme="lightTeal"></div>
+            <div class="button square-button tile-area-scheme-lightOlive" data-scheme="lightOlive"></div>
+            <div class="button square-button tile-area-scheme-lightOrange" data-scheme="lightOrange"></div>
+            <div class="button square-button tile-area-scheme-lightPink" data-scheme="lightPink"></div>
+            <div class="button square-button tile-area-scheme-grayed" data-scheme="grayed"></div>
+        </div>
+        <span class="charm-closer"></span>
+    </div>
+
+    <div class="app-bar fixed-top tile-area-scheme-darkBlue special-tile-area fg-white " data-role="appbar">
+        <a class="app-bar-element branding">WITNESS</a>
+        <span class="app-bar-divider"></span>
+        <ul class="app-bar-menu">
+            <li data-flexorderorigin="0" data-flexorder="1"><a href="index.html">Dashboard</a></li>
+            <li data-flexorderorigin="2" data-flexorder="2"><a href="#" onclick="$('#view').load('views/about.html')">About</a></li>
+        </ul>
+
+        <div class="app-bar-element place-right">
+            <span class="dropdown-toggle" onclick="showCharms('#charmSettings')"><span class="mif-cog"></span> Settings</span>
+            <!--<div class="app-bar-drop-container padding10 place-right no-margin-top block-shadow fg-dark" data-role="dropdown" data-no-close="true" style="width: 220px">
+                <h2 class="text-light">Quick settings</h2>
+                <ul class="unstyled-list fg-dark">
+                    <li><a href="" class="fg-white1 fg-hover-yellow">Profile</a></li>
+                    <li><a href="" class="fg-white2 fg-hover-yellow">Security</a></li>
+                    <li><a href="" class="fg-white3 fg-hover-yellow">Exit</a></li>
+                </ul>
+            </div>-->
+        </div>
+        <div class="app-bar-pullbutton automatic" style="display: none;"></div>
+        <div class="clearfix" style="width: 0;"></div>
+        <nav class="app-bar-pullmenu hidden flexstyle-app-bar-menu" style="display: none;">
+            <ul class="app-bar-pullmenubar hidden app-bar-menu"></ul>
+        </nav>
+    </div>
+
+    <div class="page-content">
+        <div class="flex-grid no-responsive-future" style="height: 100%;">
+            <div class="row" style="height: 100%">
+                <div class="cell size-x200" id="cell-sidebar" style="background-color: #41b1d1; height: 100%">
+                    <ul class="sidebar">
+                        <li class="active">
+                            <a href="#">
+                                <span class="mif-power-cord icon"></span>
+                                <span class="title">Power</span>
+                                <span class="counter"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="mif-lamp icon"></span>
+                                <span class="title">Lights<br />[TODO]</span>
+                                <span class="counter"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="mif-youtube-play icon"></span>
+                                <span class="title">YouTube Playlist<br />[TODO]</span>
+                                <span class="counter"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="mif-alarm-on icon"></span>
+                                <span class="title">Alarm Clock<br />[TODO]</span>
+                                <span class="counter"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="mif-settings-voice icon"></span>
+                                <span class="title">Voice Control<br />[TODO]</span>
+                                <span class="counter"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="cell auto-size padding20 bg-white" id="cell-content">
+                    <div id="view" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

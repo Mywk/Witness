@@ -1,0 +1,63 @@
+﻿
+    <script>
+
+        function switchPower(id, status) {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("GET", "/api/power/" + id + "/" + status, false);
+            xmlHttp.send(null);
+            x = xmlHttp.responseText;
+            y = 0;
+        };
+
+        function allPowerSwitch(state) {
+
+            switchPower(0, state);
+            switchPower(1, state);
+            $("#monitors").prop("checked", state);
+            $("#tv").prop("checked", state);
+
+        }
+
+    </script>
+
+
+    <h1 class="text-light">Power<span class="mif-power-cord place-right"></span></h1>
+    <hr class="thin bg-grayLighter">
+    <button class="button success" onclick="allPowerSwitch(true)">ALL ON</button>
+    <button class="button alert" onclick="allPowerSwitch(false)">ALL OFF</button>
+    <hr class="thin bg-grayLighter">
+    <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+        <table class="dataTable border bordered no-footer" data-role="datatable" data-auto-width="false" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+            <thead>
+                <tr role="row">
+                    <td class="sortable-column sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Machine name: activate to sort column ascending">Socket</td>
+                    <td class="sortable-column sorting" style="width: 20px" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Status</td>
+                    <td style="width: 20px" class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Switch: activate to sort column ascending">Switch</td>
+                </tr>
+            </thead>
+            <tbody>
+
+
+                <tr role="row" class="odd">
+                    <td>TV</td>
+                    <td class="align-center"><span class="mif-checkmark fg-green"></span></td>
+                    <td>
+                        <label class="switch-original">
+                            <input id="tv" type="checkbox">
+                            <span class="check" onclick="switchPower(0,!$('#tv').is(':checked'));"></span>
+                        </label>
+                    </td>
+                </tr>
+                <tr role="row" class="even">
+                    <td>Monitor 1 &amp; 2</td>
+                    <td class="align-center"><span class="mif-stop fg-red"></span></td>
+                    <td>
+                        <label class="switch-original">
+                            <input id="monitors" type="checkbox" checked="checked">
+                            <span class="check" onclick="switchPower(1,!$('#monitors').is(':checked'));"></span>
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
