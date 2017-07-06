@@ -95,12 +95,18 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controllers\TimersControlCenter.cs" />
+    <Compile Include="Converter.cs" />
     <Compile Include="Database.cs" />
-    <Compile Include="DatabaseModel\Timers.cs" />
-    <Compile Include="GpioControlCenter.cs" />
-    <Compile Include="DatabaseModel\Relays.cs" />
+    <Compile Include="DatabaseModel\Timer.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Controllers\GpioControlCenter.cs" />
+    <Compile Include="DatabaseModel\Relay.cs" />
+    <Compile Include="Controllers\RelayControlCenter.cs" />
+    <Compile Include="RestControllers\Common.cs" />
     <Compile Include="RestControllers\Query.cs" />
-    <Compile Include="RestControllers\Power.cs" />
+    <Compile Include="RestControllers\Relay.cs" />
+    <Compile Include="RestControllers\Timer.cs" />
     <Compile Include="StartupTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -109,10 +115,14 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <Content Include="web\css\datatables.css" />
+    <Content Include="web\css\font-awesome.min.css" />
+    <Content Include="web\css\jquery.datetimepicker.css" />
+    <Content Include="web\js\jquery-min.js" />
+    <Content Include="web\js\jquery.datetimepicker.full.min.js" />
     <Content Include="web\views\about.html" />
     <Content Include="web\js\datatables.js" />
-    <Content Include="web\js\jquery.js" />
     <Content Include="web\js\metro.js" />
+    <Content Include="web\views\lights.html" />
     <Content Include="web\views\power.html" />
     <None Include="web\fonts\metro.eot" />
     <Content Include="web\fonts\metro.ttf" />

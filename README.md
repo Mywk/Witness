@@ -11,7 +11,6 @@ Planned features:
 - YouTube Playlist
 - Alarm clock
 - Voice control (probably going with Cortana for this one)
-- Add/Remove relays in the webpage instead of statically in the code
 
 Currently working on:
 - Timed relay control
@@ -20,10 +19,11 @@ Planned for later (if someone else wants to help with this project):
 - Plugins (for example instead of a static MiLight bridge controller, use a plugin instead)
 - Login and authentication
 - Embedded remote control for desktop (mouse, window view, cmd line, shutdown/sleep/etc..)
+- Add/Remove relays in the webpage instead of statically in the code
 
 Don't expect the commits to be very detailed.
 
 
 Author: Mywk @ www.TechCoders.Net © 2017
 
-Libraries/nuget packages used: Metro UI CSS, JQuery, Restup, sqlite-net-pcl, SQLite for Universal Windows Platform
+Libraries/nuget packages used: Metro UI CSS, JQuery, Restup, sqlite-net-pcl, SQLite for Universal Windows Platform, Font Awesome, datetimepicker by Chupurnov Valeriy

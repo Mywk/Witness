@@ -1,73 +1,209 @@
-﻿
-<script>
-
-    $(document).ready(function () {
-    });
+﻿<script>
 
     function getPower() {
-
         var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("GET", "/api/query/power", true);
+        xmlHttp.open("GET", "/api/query/relay", true);
         xmlHttp.onreadystatechange = function () {
             if (this.readyState === this.DONE) {
                 var data = JSON.parse(xmlHttp.responseText);
+                var t = $('#powerData').DataTable();
                 data.forEach(function (relay) {
-                    var t = $('#powerData').DataTable();
-                    var checkbox = `<label class="switch-original">
-                            <input id="relay_`+ relay[0] + `" type="checkbox" ` + (relay[2] == true ? "checked=\"checked\"" : "") + `>
-                                <span class="check" onclick="switchPower(`+ relay[0] + `,!$('#relay_`+ relay[0] + `').is(':checked'));"></span>
+                    var switch_html = `<label class="switch-original">
+                            <input id="relay_`+ relay[0] + `" type="checkbox" ` + (relay[2] ? "checked=\"checked\"" : "") + `>
+                                <span class="check" onclick="switchPower(`+ relay[0] + `,!$('#relay_` + relay[0] + `').is(':checked'));"></span>
                         </label>`;
+                    var checkbox_html = `<label class="input-control checkbox" >
+                            <input class="input-control checkbox" type="checkbox" id="relay_timer_` + relay[0] + `" ` + (relay[3] ? "checked" : "") + ` onclick="switchTimer(` + relay[0] + `,!$('#relay_timer_` + relay[0] + `').is(':checked'));" />
+                            <span class="check" /><span class="caption" /></label><button id="relay_timer_cog_` + relay[0] + `"` + (!relay[3] ? " style=\"display:none;\" " : "") + ` onclick="openTimerSettings(` + relay[0] + `)" > <span class="mif-cog"></span></button>`;
                     t.row.add([
                         relay[0],
                         relay[1],
-                        checkbox
+                        switch_html,
+                        checkbox_html
                     ]).draw(true);
                 });
             }
         };
         xmlHttp.send();
-
-
     };
 
-    function switchPower(id, status) {
+    function saveTimers() {
+
+        var t = getTimersDataTable();
+        var data = t.rows().data();
+        var stringData = "";
+        data.each(function (timer, index) {
+            stringData += $('#timepicker_from_' + timer[0]).val() + ',' + $('#timepicker_to_' + timer[0]).val() + ";";
+        });
+
         var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("GET", "/api/power/" + id + "/" + status, true);
+        xmlHttp.open("GET", "/api/timer/set/" + selectedRelayId + "/" + stringData);
+        xmlHttp.send();
+
+    }
+
+    function openTimerSettings(id) {
+
+        var name = "";
+        var t = $('#powerData').DataTable();
+        t.rows().data().each(function (value, index) {
+            if (value[0] == id)
+                name = value[1];
+        });
+
+        if (name == "") // This should never hit
+            name = id;
+
+        metroDialog.open('#timersDialog');
+        getTimers(id);
+        selectedRelayId = id;
+    }
+
+    function addTimer() {
+
+        // This has to be improved
+        var id = 0;
+
+        var t = getTimersDataTable();
+        var data = t.rows().data();
+        data.forEach(function (timer, index) {
+            if (timer[0] > id)
+                id = timer[0];
+        });
+        id++;
+
+        var from_html = `<input id="timepicker_from_` + timer[0] + `" type="text" value="00:00" />`;
+        var to_html = `<input id="timepicker_to_` + timer[0] + `" type="text" value="00:00" />`;
+        t.row.add([
+            id,
+            from_html,
+            to_html,
+            '<button class="button small-button" onclick="deleteTimer(' + timer[0] + ')"><span class="mif-minus"></span></button>'
+        ]).draw(true);
+    }
+
+    function getTimersDataTable(clear = false) {
+        var table = $('#timersData').DataTable();
+        table = $('#timersData').DataTable({
+            "paging": false,
+            "ordering": false,
+            "info": false,
+            "searching": false,
+            "destroy": true
+        });
+        if (clear)
+            table.clear();
+        table.draw();
+        return table;
+    }
+
+    function getTimers(id) {
+
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", "/api/query/relay/timer/" + id, true);
+        xmlHttp.onreadystatechange = function () {
+            if (this.readyState === this.DONE) {
+                var data = JSON.parse(xmlHttp.responseText);
+                data.forEach(function (timer) {
+
+                    var from_html = `<input id="timepicker_from_` + timer[0] + `" type="text" value="` + timer[1] +`" />`;
+                    var to_html = `<input id="timepicker_to_` + timer[0] + `" type="text" value="` + timer[2] +`" />`;
+
+                    var t = getTimersDataTable(true);
+                    t.row.add([
+                        timer[0],
+                        from_html,
+                        to_html,
+                        '<button class="button small-button" onclick="deleteTimer(' + timer[0] + ')"><span class="mif-minus"></span></button>'
+                    ]).draw(true);
+
+                    $("#timepicker_from_" + timer[0]).datetimepicker({
+                        datepicker: false,
+                        format: 'H:i'
+                    });
+
+                    $("#timepicker_to_" + timer[0]).datetimepicker({
+                        datepicker: false,
+                        format: 'H:i'
+                    });
+
+                });
+            }
+        };
         xmlHttp.send();
     };
 
     function allPowerSwitch(state) {
-
         var t = $('#powerData').DataTable();
         var data = t.rows().data();
         data.each(function (value, index) {
             switchPower(value[0], state);
-            $("#relay_" + value[0]).prop("checked", state);
-        }); 
+            $("#relay_" + value[0]).prop("checked", state, value[3]);
+        });
     };
 
-    getPower();
+    function switchPower(id, state) {
+        request("power", id, state);
+    };
+
+    function switchTimer(id, state) {
+        request("timer", id, state);
+        $("#relay_timer_cog_" + id).css('display', (state ? 'none' : ''));
+    };
+
+    function request(type, id, state) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", "/api/relay/" + type + "/" + id + "/" + state, true);
+        xmlHttp.send();
+    };
+
+    $(document).ready(function () {
+        getPower();
+    });
+
 
 </script>
 
-<h1 class="text-light">Power<span class="mif-power-cord place-right"></span></h1>
+<h1 class="text-light">Power<span class="mif-power-cord place-right icon-flipped"></span></h1>
 <hr class="thin bg-grayLighter">
 <button class="button success" onclick="allPowerSwitch(true)">ALL ON</button>
 <button class="button alert" onclick="allPowerSwitch(false)">ALL OFF</button>
 <hr class="thin bg-grayLighter">
-<div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+<div class="dataTables_wrapper no-footer">
     <table class="dataTable border bordered no-footer" data-role="datatable" data-auto-width="false" id="powerData" role="grid">
         <thead>
             <tr role="row">
                 <td class="sortable-column sorting" style="width: 20px" tabindex="0" aria-controls="powerData">ID</td>
                 <td class="sortable-column sorting" tabindex="1" aria-controls="powerData">Socket</td>
                 <td style="width: 20px" class="sorting" tabindex="2" aria-controls="powerData">Switch</td>
+                <td style="width: 55px" class="sorting" tabindex="2" aria-controls="powerData">Timer</td>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
-    <!--  TODO   -->
-    <!--<td class="sortable-column sorting" style="width: 20px" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Status</td>-->
-    <!--<td class="align-center"><span class="mif-checkmark fg-green/ mif-stop fg-red"></span></td>-->
+    <div data-role="dialog" id="timersDialog" class="padding20" data-overlay="true" data-overlay-color="#A6647687"
+         data-close-button="false"
+         data-width="600">
+        <div style="text-align:right;"><button class="button" onclick="addTimer()"><span class="mif-plus"> </span> Add</button></div>
+        <div class="dataTables_wrapper no-footer">
+            <table class="dataTable border bordered no-footer" data-role="datatable" data-auto-width="false" id="timersData" role="grid">
+                <thead>
+                    <tr role="row">
+                        <td class="sortable-column sorting" style="width: 20px" tabindex="0" aria-controls="timersData">ID</td>
+                        <td style="width: 60px;" tabindex="1" aria-controls="timersData">From</td>
+                        <td style="width: 60px" tabindex="2" aria-controls="timersData">To</td>
+                        <td style="width: 15px" tabindex="3" aria-controls="timersData"></td>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div style="text-align:right;">
+            <button class="button" onclick="saveTimers(); metroDialog.close('#timersDialog');"><span class="mif-checkmark" data-dismiss="timersDialog" > </span> Save</button><button class="button" onclick="metroDialog.close('#timersDialog')"><span class="mif-cross"> </span> Cancel</button>
+        </div>
+        <!--  PIN STATE: TODO   -->
+        <!--<td class="sortable-column sorting" style="width: 20px" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="State: activate to sort column ascending">State</td>-->
+        <!--<td class="align-center"><span class="mif-checkmark fg-green/ mif-stop fg-red"></span></td>-->
+    </div>
 </div>

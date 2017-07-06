@@ -28,7 +28,8 @@ namespace WITNESS
 
             var restRouteHandler = new RestRouteHandler();
             restRouteHandler.RegisterController<RestControllers.Query>();
-            restRouteHandler.RegisterController<RestControllers.Power>();
+            restRouteHandler.RegisterController<RestControllers.Relay>();
+            restRouteHandler.RegisterController<RestControllers.Timer>();
 
             var configuration = new HttpServerConfiguration()
               .ListenOnPort(81)
@@ -38,9 +39,29 @@ namespace WITNESS
 
             var httpServer = new HttpServer(configuration);
             await httpServer.StartServerAsync();
-            GpioControlCenter.Active = new GpioControlCenter();
 
+            // Initialize the database
             Database.Active = new Database();
+
+            GpioControlCenter.Active = new GpioControlCenter();
+            RelayControlCenter.Active = new RelayControlCenter();
+
+            LoadLastStates();
+
+
+            // Start the timer controler
+            TimersControlCenter.Active = new TimersControlCenter();
+        }
+
+        private void LoadLastStates()
+        {
+            var relays = Database.Active.GetConnection().Table<DatabaseModel.Relay>().ToList();
+            foreach (var relay in relays)
+            {
+                // Only set if LastState is true, everything is disabled by default
+                if(relay.LastState)
+                    RelayControlCenter.Active.SetPower(relay.Id, relay.LastState);
+            }
         }
 
     }

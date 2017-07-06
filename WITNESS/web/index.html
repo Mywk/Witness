@@ -10,12 +10,14 @@
     <link href="css/metro.css" rel="stylesheet" />
     <link href="css/metro-icons.css" rel="stylesheet" />
     <link href="css/metro-responsive.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <link href="css/jquery.datetimepicker.css" rel="stylesheet" />
 
     <link href="css/datatables.css" rel="stylesheet" />
+    <script data-main="scripts/main" src="js/jquery-min.js"></script>
+    <script data-main="scripts/main" src="js/jquery.datetimepicker.full.min.js"></script>
 
-    <script data-main="scripts/main" src="js/jquery.js"></script>
     <script src="js/dataTables.js"></script>
-
     <script src="js/metro.js"></script>
 
     <script>
@@ -91,6 +93,13 @@
 
 
     <style>
+        .icon-flipped {
+            transform: scaleX(-1);
+            -moz-transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
+            -ms-transform: scaleX(-1);
+        }
+
         html, body {
             height: 100%;
         }
@@ -163,17 +172,18 @@
             <li data-flexorderorigin="2" data-flexorder="2"><a href="#" onclick="$('#view').load('views/about.html')">About</a></li>
         </ul>
 
-        <div class="app-bar-element place-right">
-            <span class="dropdown-toggle" onclick="showCharms('#charmSettings')"><span class="mif-cog"></span></span>
-            <!--<div class="app-bar-drop-container padding10 place-right no-margin-top block-shadow fg-dark" data-role="dropdown" data-no-close="true" style="width: 220px">
-                <h2 class="text-light">Quick settings</h2>
-                <ul class="unstyled-list fg-dark">
-                    <li><a href="" class="fg-white1 fg-hover-yellow">Profile</a></li>
-                    <li><a href="" class="fg-white2 fg-hover-yellow">Security</a></li>
-                    <li><a href="" class="fg-white3 fg-hover-yellow">Exit</a></li>
-                </ul>
-            </div>-->
+        <div class="app-bar-element place-right" onclick="showCharms('#charmSettings')">
+            <span class="mif-cogs"></span><span class="dropdown-toggle" ></span>
         </div>
+        <!--<div class="app-bar-drop-container padding10 place-right no-margin-top block-shadow fg-dark" data-role="dropdown" data-no-close="true" style="width: 220px">
+            <h2 class="text-light">Quick settings</h2>
+            <ul class="unstyled-list fg-dark">
+                <li><a href="" class="fg-white1 fg-hover-yellow">Profile</a></li>
+                <li><a href="" class="fg-white2 fg-hover-yellow">Security</a></li>
+                <li><a href="" class="fg-white3 fg-hover-yellow">Exit</a></li>
+            </ul>
+        </div>-->
+        
         <div class="app-bar-pullbutton automatic" style="display: none;"></div>
         <div class="clearfix" style="width: 0;"></div>
         <nav class="app-bar-pullmenu hidden flexstyle-app-bar-menu" style="display: none;">
@@ -187,15 +197,15 @@
                 <div class="cell size-x200" id="cell-sidebar" style="background-color: #41b1d1; height: 100%">
                     <ul class="sidebar">
                         <li class="active">
-                            <a href="#">
+                            <a href="#"  onclick="$('#view').load('views/power.html')">
                                 <span class="mif-power-cord icon"></span>
                                 <span class="title">Power</span>
                                 <span class="counter"></span>
                             </a>
                         </li>
                         <li>
-                            <a href="#">
-                                <span class="mif-lamp icon"></span>
+                            <a href="#" onclick="$('#view').load('views/lights.html')">
+                                <span class="mif-lamp icon" ></span>
                                 <span class="title">Lights<br />[TODO]</span>
                                 <span class="counter"></span>
                             </a>

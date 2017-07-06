@@ -35,23 +35,34 @@ namespace WITNESS
 
                 try
                 {
-                    conn.CreateTable<DatabaseModel.Timers>(CreateFlags.None);
-                    conn.CreateTable<DatabaseModel.Relays>(CreateFlags.None);
+                    conn.CreateTable<DatabaseModel.Timer>(CreateFlags.None);
+                    conn.CreateTable<DatabaseModel.Relay>(CreateFlags.None);
 
                     if (testEntries)
                     {
                         // Looks bad but will suffice for now
-                        conn.Insert(new DatabaseModel.Relays()
-                        {
-                            Gpio = 17,
-                            Name = "TV",
-                            DefaultState = false
-                        });
-                        conn.Insert(new DatabaseModel.Relays()
+                        conn.Insert(new DatabaseModel.Relay()
                         {
                             Gpio = 27,
-                            Name = "Monitor 1 & 2",
-                            DefaultState = true
+                            Name = "TV"
+                        });
+                        conn.Insert(new DatabaseModel.Relay()
+                        {
+                            Gpio = 17,
+                            Name = "Monitor 1 & 2"
+                        });
+                        conn.Insert(new DatabaseModel.Relay()
+                        {
+                            Gpio = 22,
+                            Name = "Plant Lights",
+                            TimerActive = true
+                        });
+                        conn.Insert(new DatabaseModel.Timer()
+                        {
+                            TargetId = 3,
+                            From = 1234,
+                            To = 2456,
+                            Type = (int)Enums.TimerType.Relay
                         });
                     }
                 }
