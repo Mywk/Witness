@@ -9,11 +9,11 @@
                 var t = $('#powerData').DataTable();
                 data.forEach(function (relay) {
                     var switch_html = `<label class="switch-original">
-                            <input id="relay_`+ relay[0] + `" type="checkbox" ` + (relay[2] ? "checked=\"checked\"" : "") + `>
-                                <span class="check" onclick="switchPower(`+ relay[0] + `,!$('#relay_` + relay[0] + `').is(':checked'));"></span>
+                            <input id="relay_`+ relay[0] + `" type="checkbox" ` + ((relay[2] && !relay[3]) ? "checked=\"checked\"" : "") + (relay[3] ? " disabled " : "") + ` onclick="switchPower(` + relay[0] + `,$('#relay_` + relay[0] + `').is(':checked'));" >
+                                <span class="check"></span>
                         </label>`;
                     var checkbox_html = `<label class="input-control checkbox" >
-                            <input class="input-control checkbox" type="checkbox" id="relay_timer_` + relay[0] + `" ` + (relay[3] ? "checked" : "") + ` onclick="switchTimer(` + relay[0] + `,!$('#relay_timer_` + relay[0] + `').is(':checked'));" />
+                            <input class="input-control checkbox" type="checkbox" id="relay_timer_` + relay[0] + `" ` + (relay[3] ? "checked" : "") + ` onclick="switchTimer(` + relay[0] + `,$('#relay_timer_` + relay[0] + `').is(':checked'));" />
                             <span class="check" /><span class="caption" /></label><button id="relay_timer_cog_` + relay[0] + `"` + (!relay[3] ? " style=\"display:none;\" " : "") + ` onclick="openTimerSettings(` + relay[0] + `)" > <span class="mif-cog"></span></button>`;
                     t.row.add([
                         relay[0],
@@ -37,7 +37,7 @@
         });
 
         var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("GET", "/api/timer/set/" + selectedRelayId + "/" + stringData);
+        xmlHttp.open("GET", "/api/timer/set/" + selectedRelayId + "/" + stringData, true);
         xmlHttp.send();
 
     }
@@ -66,7 +66,7 @@
 
         var t = getTimersDataTable();
         var data = t.rows().data();
-        data.forEach(function (timer, index) {
+        data.each(function (timer, index) {
             if (timer[0] > id)
                 id = timer[0];
         });
@@ -103,13 +103,15 @@
         xmlHttp.open("GET", "/api/query/relay/timer/" + id, true);
         xmlHttp.onreadystatechange = function () {
             if (this.readyState === this.DONE) {
+
+                var t = getTimersDataTable(true);
+
                 var data = JSON.parse(xmlHttp.responseText);
                 data.forEach(function (timer) {
 
                     var from_html = `<input id="timepicker_from_` + timer[0] + `" type="text" value="` + timer[1] +`" />`;
                     var to_html = `<input id="timepicker_to_` + timer[0] + `" type="text" value="` + timer[2] +`" />`;
 
-                    var t = getTimersDataTable(true);
                     t.row.add([
                         timer[0],
                         from_html,
@@ -147,8 +149,9 @@
     };
 
     function switchTimer(id, state) {
+        $("#relay_" + id).prop('checked', false).prop('disabled', state);
+        $("#relay_timer_cog_" + id).css('display', (state ? '' : 'none'));
         request("timer", id, state);
-        $("#relay_timer_cog_" + id).css('display', (state ? 'none' : ''));
     };
 
     function request(type, id, state) {

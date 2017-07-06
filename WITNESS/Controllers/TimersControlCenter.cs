@@ -6,6 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Gpio;
 
+#pragma warning disable 4014
+
 namespace WITNESS
 {
     public sealed class TimersControlCenter
@@ -42,6 +44,35 @@ namespace WITNESS
             PeriodicTask.Run(CheckRelayTimers, new TimeSpan(0, 0, 10), cancellationToken);
         }
 
+        public bool SetTimer(int type, int id, bool state)
+        {
+            switch ((Enums.TimerType)type)
+            {
+                case Enums.TimerType.Relay:
+
+                    var relays = Database.Active.GetConnection().Table<DatabaseModel.Relay>().Where(r => (r.Id == id)).ToList();
+                    if (relays.Count > 0)
+                    {
+                        // If we are setting the timer and the relay is active we need to disable it
+
+                        relays[0].TimerActive = state;
+
+                        if (RelayControlCenter.Active.SetPower(id, false, false))
+                            relays[0].LastState = false;
+                        else return false;
+
+                        Database.Active.GetConnection().Update(relays[0]);
+                        return true;
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+
+            return false;
+        }
+
         private void CheckRelayTimers()
         {
             if (Database.Active != null && RelayControlCenter.Active != null)
@@ -58,13 +89,22 @@ namespace WITNESS
                         TimeSpan now = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0);
                         if ((now > timespan_from) && (now < timespan_to))
                         {
-                            if(RelayControlCenter.Active.SetPower(relay.Id, true))
-                                relay.LastState = true;
+                            if (relay.LastState != true)
+                            {
+                                if (RelayControlCenter.Active.SetPower(relay.Id, true))
+                                {
+                                    relay.LastState = true;
+                                    Database.Active.GetConnection().Update(relay);
+                                }
+                            }
                         }
                         else if (relay.LastState != false)
                         {
-                            if(RelayControlCenter.Active.SetPower(relay.Id, false))
+                            if (RelayControlCenter.Active.SetPower(relay.Id, false))
+                            {
                                 relay.LastState = false;
+                                Database.Active.GetConnection().Update(relay);
+                            }
                         }
                     }
                 }

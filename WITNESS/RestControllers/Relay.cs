@@ -18,5 +18,11 @@ namespace WITNESS.RestControllers
         {
             return Common.RestGetResponse(RelayControlCenter.Active.SetPower(id, state), new List<object> { id.ToString(), state.ToString() }); 
         }
+
+        [UriFormat("/relay/timer/{id}/{state}")]
+        public IGetResponse SetTimer(int id, bool state)
+        {
+            return Common.RestGetResponse(TimersControlCenter.Active.SetTimer((int)Enums.TimerType.Relay, id, state), new List<object> { id.ToString(), state.ToString() });
+        }
     }
 }

@@ -11,13 +11,28 @@ namespace WITNESS
     {
         internal static RelayControlCenter Active;
 
-        public bool SetPower(int id, bool on)
+        public bool SetPower(int id, bool state)
+        {
+            return SetPower(id, state, true);
+        }
+
+        public bool SetPower(int id, bool state, bool writeToDatabase)
         {
             var relay = Database.Active.GetConnection().Table<DatabaseModel.Relay>().Where(t => t.Id == id).ToList();
             if (relay.Count > 0)
-                return GpioControlCenter.Active.SetGpio(relay[0].Gpio, on);
-            else
-                return false;
+            {
+                if(GpioControlCenter.Active.SetGpio(relay[0].Gpio, state))
+                {
+                    if (writeToDatabase)
+                    {
+                        relay[0].LastState = state;
+                        Database.Active.GetConnection().Update(relay[0]);
+                    }
+                    return true;
+                }
+            }
+            
+            return false;
         }
 
         public bool SetTimer(int id, bool on)
