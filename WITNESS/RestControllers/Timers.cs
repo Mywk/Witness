@@ -11,7 +11,7 @@ using WITNESS.RestControllers;
 namespace WITNESS.RestControllers
 {
     [RestController(InstanceCreationType.Singleton)]
-    public sealed class Timer
+    public sealed class Timers
     {
         [UriFormat("/timer/set/{relayId}/{timers}")]
         public IGetResponse SetTimer(int relayId, string timers)

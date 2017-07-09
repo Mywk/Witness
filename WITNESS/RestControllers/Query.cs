@@ -16,7 +16,7 @@ namespace WITNESS.RestControllers
         {
             public static IGetResponse GetTimers(int id, Enums.TimerType type)
             {
-                List<object[]> dic = new List<object[]>();
+                List<object[]> list = new List<object[]>();
 
                 bool queryResult = true;
                 try
@@ -34,7 +34,7 @@ namespace WITNESS.RestControllers
                             timespan_to = temp;
                         }
 
-                        dic.Add(new object[] { timer.Id, string.Format("{0:D2}:{1:D2}", timespan_from.Hours, timespan_from.Minutes), string.Format("{0:D2}:{1:D2}", timespan_to.Hours, timespan_to.Minutes) });
+                        list.Add(new object[] { timer.Id, string.Format("{0:D2}:{1:D2}", timespan_from.Hours, timespan_from.Minutes), string.Format("{0:D2}:{1:D2}", timespan_to.Hours, timespan_to.Minutes) });
                     }
                 }
                 catch (Exception)
@@ -42,14 +42,14 @@ namespace WITNESS.RestControllers
                     queryResult = false;
                 }
 
-                return Common.RestGetResponse(queryResult, dic);
+                return Common.RestGetResponse(queryResult, list);
             }
         }
 
         [UriFormat("/query/relay")]
         public IGetResponse GetPower()
         {
-            List<object[]> dic = new List<object[]>();
+            List<object[]> list = new List<object[]>();
 
             bool queryResult = true;
             try
@@ -57,7 +57,7 @@ namespace WITNESS.RestControllers
                 var query = Database.Active.GetConnection().Table<DatabaseModel.Relay>();
                 foreach (var relay in query)
                 {
-                    dic.Add(new object[] { relay.Id, relay.Name, relay.LastState, relay.TimerActive });
+                    list.Add(new object[] { relay.Id, relay.Name, relay.LastState, relay.TimerActive });
                 }
             }
             catch (Exception)
@@ -65,13 +65,52 @@ namespace WITNESS.RestControllers
                 queryResult = false;
             }
 
-            return Common.RestGetResponse(queryResult, dic);
+            return Common.RestGetResponse(queryResult, list);
         }
 
         [UriFormat("/query/relay/timer/{powerId}")]
         public IGetResponse GetTimer(int powerId)
         {
             return Helper.GetTimers(powerId, Enums.TimerType.Relay);
+        }
+
+        [UriFormat("/query/lights")]
+        public IGetResponse GetLights()
+        {
+            List<object[]> list = new List<object[]>();
+            Dictionary<int, int> foundCombos = new Dictionary<int,int>();
+
+            bool queryResult = true;
+            try
+            {
+                var bridges = Database.Active.GetConnection().Table<DatabaseModel.MilightBridge>();
+                foreach (var bridge in bridges)
+                {
+                    var groups = Database.Active.GetConnection().Table<DatabaseModel.MilightGroup>();
+                    foreach (var group in groups)
+                    {
+                        var combos = Database.Active.GetConnection().Table<DatabaseModel.MilightCombo>().Where(c => (c.FirstGroupId == group.Id || c.SecondGroupId == group.Id)).ToList();
+                        if (combos.Count > 0)
+                        {
+                            if (foundCombos.ContainsKey(group.Id) || foundCombos.ContainsValue(group.Id))
+                                list.Add(new object[] { combos[0].Id,  group.BridgeId, combos[0].Name, combos[0].Brightness, combos[0].Color, combos[0].LastState, true });
+                            else
+                                foundCombos.Add(combos[0].FirstGroupId, combos[0].SecondGroupId);
+                            continue;
+                        }
+                        else
+                        {
+                            list.Add(new object[] { group.Id, group.BridgeId, group.Name, group.Brightness, group.Color, group.LastState, false });
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                queryResult = false;
+            }
+
+            return Common.RestGetResponse(queryResult, list);
         }
     }
 }

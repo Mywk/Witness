@@ -4,6 +4,15 @@
     $(document).ready(function () {
     });
 
+    var colorPickers = [];
+
+    function dropValueToInput(value, slider) {
+        var id = slider.toArray()[0].id;
+        var slider = $("#slider_" + id);
+        slider.val(value);
+        setBrightness(id.split("_")[1], value);
+    }
+
     function getPower() {
 
         var xmlHttp = new XMLHttpRequest();
@@ -12,37 +21,85 @@
             if (this.readyState === this.DONE) {
                 var data = JSON.parse(xmlHttp.responseText);
                 // TODO
-                /*data.forEach(function (relay) {
-                    var t = $('#powerData').DataTable();
+                data.forEach(function (relay) {
+                    var t = $('#lightsData').DataTable();
                     var checkbox = `<label class="switch-original">
-                            <input id="relay_`+ relay[0] + `" type="checkbox" ` + (relay[2] == true ? "checked=\"checked\"" : "") + `>
-                                <span class="check" onclick="switchPower(`+ relay[0] + `,!$('#relay_`+ relay[0] + `').is(':checked'));"></span>
+                            <input id="light_`+ relay[0] + `" type="checkbox" ` + (relay[5] == true ? "checked=\"checked\"" : "") + `>
+                                <span class="check" onclick="switchLight`+ ((relay[6] == true) ? "Combo" : "") +`(`+ relay[0] + `,!$('#light_`+ relay[0] + `').is(':checked'));"></span>
                         </label>`;
+                    var brightness = `<div id="brightness_` + relay[0] + `" class="slider"
+                    data-on-change="dropValueToInput"
+                    data-role="slider"
+                    data-max-value="27"
+                    data-position="`+ relay[3] +`"
+                    data-min-value="2" ></div>
+                    <div class="input-control text" style="display: none;">
+                            <input id="slider_brightness_` + relay[0] + `" value="`+ relay[3] +`">
+                    </div>`;
+                    var color = `<div id="color_` + relay[0] + `" onclick="alert('Not implemented!');"></div>`; // relay[4]
                     t.row.add([
-                        relay[0],
+                        relay[0] + ((relay[6] == true) ? "[C]" : ""),
                         relay[1],
+                        relay[2],
+                        brightness,
+                        color,
                         checkbox
                     ]).draw(true);
-                });*/
+
+                    var relay_id = relay[0];
+                    setTimeout(function () {
+
+                        var colorPicker = new iro.ColorPicker("#color_" + relay_id, {
+                            // Canvas dimensions:
+                            width: 130,
+                            height: 130,
+                            color: "#fff",
+                            markerRadius: 4,
+                            padding: 2,
+                            sliderMargin: -9999,
+                            borderWidth: 2,
+                            borderColor: "#000",
+                            css: {}
+                        });
+                        colorPicker.data_id = relay_id;
+                        colorPickers.push(colorPicker);
+
+                    }, 200, relay_id);
+
+                });
             }
         };
         xmlHttp.send();
     };
 
-    function switchPower(id, status) {
+    function switchLightCombo(id, status) {
+        switchLight(id, status, true);
+    }
+
+    function switchLight(id, status, combo = false) {
         var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("GET", "/api/power/" + id + "/" + status, true);
+        xmlHttp.open("GET", "/api/light/" + ((combo) ? "combo/" : "") + id + "/" + status, true);
         xmlHttp.send();
     };
 
-    function allLightsSwitch(state) {
 
+    function setBrightness(id, value) {
+
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", "/api/light/brightness/" + id + "/" + value, true);
+        xmlHttp.send();
+
+    };
+
+    // TODO
+    function allLightsSwitch(state) {
+        /*
         var t = $('#lightsData').DataTable();
         var data = t.rows().data();
         data.each(function (value, index) {
-            switchPower(value[0], state);
+            switch???(value[0], state);
             $("#light_" + value[0]).prop("checked", state);
-        });
+        });*/
     };
 
     getPower();
@@ -59,9 +116,11 @@
         <thead>
             <tr role="row">
                 <td class="sortable-column sorting" style="width: 20px" tabindex="0" aria-controls="lightsData">ID</td>
-                <td class="sortable-column sorting" style="width: 20px" tabindex="0" aria-controls="lightsData">Bridge</td>
-                <td class="sortable-column sorting" tabindex="1" aria-controls="lightsData">Name</td>
-                <td style="width: 60px" tabindex="2" aria-controls="lightsData">Color</td>
+                <td class="sortable-column sorting" style="width: 20px" tabindex="1" aria-controls="lightsData">Bridge</td>
+                <td class="sortable-column sorting" tabindex="2" aria-controls="lightsData">Name</td>
+                <td style="width: 150px" tabindex="3" aria-controls="lightsData">Brightness</td>
+                <td style="width: 110px" tabindex="4" aria-controls="lightsData">Color</td>
+                <td style="width: 60px" tabindex="5" aria-controls="lightsData"></td>
             </tr>
         </thead>
         <tbody></tbody>

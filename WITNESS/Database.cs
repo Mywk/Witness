@@ -37,6 +37,9 @@ namespace WITNESS
                 {
                     conn.CreateTable<DatabaseModel.Timer>(CreateFlags.None);
                     conn.CreateTable<DatabaseModel.Relay>(CreateFlags.None);
+                    conn.CreateTable<DatabaseModel.MilightBridge>(CreateFlags.None);
+                    conn.CreateTable<DatabaseModel.MilightGroup>(CreateFlags.None);
+                    conn.CreateTable<DatabaseModel.MilightCombo>(CreateFlags.None);
 
                     if (testEntries)
                     {
@@ -60,9 +63,41 @@ namespace WITNESS
                         conn.Insert(new DatabaseModel.Timer()
                         {
                             TargetId = 3,
-                            From = 1234,
-                            To = 2456,
+                            From = 28800,
+                            To = 75600,
                             Type = (int)Enums.TimerType.Relay
+                        });
+                        conn.Insert(new DatabaseModel.MilightBridge()
+                        {
+                            Id = 1,
+                            Name = "Bridge 1",
+                            Ip = "192.168.1.111"
+                        });
+                        conn.Insert(new DatabaseModel.MilightGroup()
+                        {
+                            Id = 1,
+                            Name = "Group 1",
+                            GroupType = 0,
+                            BridgeId = 1
+                        });
+                        conn.Insert(new DatabaseModel.MilightGroup()
+                        {
+                            Id = 2,
+                            Name = "Group 2",
+                            GroupType = 1,
+                            BridgeId = 1
+                        });
+                        conn.Insert(new DatabaseModel.MilightGroup()
+                        {
+                            Name = "Bedroom",
+                            GroupType = 2,
+                            BridgeId = 1
+                        });
+                        conn.Insert(new DatabaseModel.MilightCombo()
+                        {
+                            Name = "Living room",
+                            FirstGroupId = 1,
+                            SecondGroupId = 2
                         });
                     }
                 }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Gpio;
 
-namespace WITNESS
+namespace WITNESS.Controllers
 {
     public sealed class GpioControlCenter
     {

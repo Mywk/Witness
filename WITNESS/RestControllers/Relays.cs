@@ -7,11 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WITNESS.RestControllers;
+using WITNESS.Controllers;
 
 namespace WITNESS.RestControllers
 {
     [RestController(InstanceCreationType.Singleton)]
-    public sealed class Relay
+    public sealed class Relays
     {
         [UriFormat("/relay/power/{id}/{state}")]
         public IGetResponse SetPower(int id, bool state)

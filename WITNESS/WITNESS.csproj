@@ -95,18 +95,28 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controllers\LightsControlCenter.cs" />
     <Compile Include="Controllers\TimersControlCenter.cs" />
     <Compile Include="Converter.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="DatabaseModel\MilightCombo.cs" />
+    <Compile Include="DatabaseModel\MilightGroup.cs" />
+    <Compile Include="DatabaseModel\MilightBridge.cs" />
     <Compile Include="DatabaseModel\Timer.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Controllers\GpioControlCenter.cs" />
     <Compile Include="DatabaseModel\Relay.cs" />
     <Compile Include="Controllers\RelayControlCenter.cs" />
+    <Compile Include="Milight\AdminClient.cs" />
+    <Compile Include="Milight\Bridge.cs" />
+    <Compile Include="Milight\Enums.cs" />
+    <Compile Include="Milight\Commands.cs" />
+    <Compile Include="Milight\Client.cs" />
     <Compile Include="RestControllers\Common.cs" />
     <Compile Include="RestControllers\Query.cs" />
-    <Compile Include="RestControllers\Relay.cs" />
-    <Compile Include="RestControllers\Timer.cs" />
+    <Compile Include="RestControllers\Lights.cs" />
+    <Compile Include="RestControllers\Relays.cs" />
+    <Compile Include="RestControllers\Timers.cs" />
     <Compile Include="StartupTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -114,14 +124,16 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <Content Include="web\css\datatables.css" />
+    <Content Include="web\css\datatables.min.css" />
     <Content Include="web\css\font-awesome.min.css" />
-    <Content Include="web\css\jquery.datetimepicker.css" />
-    <Content Include="web\js\jquery-min.js" />
+    <Content Include="web\css\metro.min.css" />
+    <Content Include="web\js\metro.min.js" />
+    <Content Include="web\js\iro.min.js" />
+    <Content Include="web\css\jquery-datetimepicker.min.css" />
+    <Content Include="web\js\jquery.min.js" />
     <Content Include="web\js\jquery.datetimepicker.full.min.js" />
     <Content Include="web\views\about.html" />
-    <Content Include="web\js\datatables.js" />
-    <Content Include="web\js\metro.js" />
+    <Content Include="web\js\datatables.min.js" />
     <Content Include="web\views\lights.html" />
     <Content Include="web\views\power.html" />
     <None Include="web\fonts\metro.eot" />
@@ -155,15 +167,10 @@
     </Content>
     <Content Include="web\css\metro-colors.css" />
     <Content Include="web\css\metro-colors.min.css" />
-    <Content Include="web\css\metro-icons.css" />
     <Content Include="web\css\metro-icons.min.css" />
-    <Content Include="web\css\metro-responsive.css" />
     <Content Include="web\css\metro-responsive.min.css" />
-    <Content Include="web\css\metro-rtl.css" />
     <Content Include="web\css\metro-rtl.min.css" />
-    <Content Include="web\css\metro-schemes.css" />
     <Content Include="web\css\metro-schemes.min.css" />
-    <Content Include="web\css\metro.css" />
     <Content Include="web\fonts\metro.svg" />
     <Content Include="web\index.html" />
   </ItemGroup>

@@ -8,7 +8,7 @@ using Windows.Devices.Gpio;
 
 #pragma warning disable 4014
 
-namespace WITNESS
+namespace WITNESS.Controllers
 {
     public sealed class TimersControlCenter
     {

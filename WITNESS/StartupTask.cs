@@ -13,6 +13,7 @@ using Restup.Webserver.File;
 using Windows.Devices.Gpio;
 using SQLite;
 using System.IO;
+using WITNESS.Controllers;
 
 // The Background Application template is documented at http://go.microsoft.com/fwlink/?LinkID=533884&clcid=0x409
 
@@ -28,8 +29,9 @@ namespace WITNESS
 
             var restRouteHandler = new RestRouteHandler();
             restRouteHandler.RegisterController<RestControllers.Query>();
-            restRouteHandler.RegisterController<RestControllers.Relay>();
-            restRouteHandler.RegisterController<RestControllers.Timer>();
+            restRouteHandler.RegisterController<RestControllers.Relays>();
+            restRouteHandler.RegisterController<RestControllers.Timers>();
+            restRouteHandler.RegisterController<RestControllers.Lights>();
 
             var configuration = new HttpServerConfiguration()
               .ListenOnPort(81)
@@ -48,9 +50,12 @@ namespace WITNESS
 
             LoadLastStates();
 
+            // Start the lights control center
+            LightsControlCenter.Active = new LightsControlCenter();
 
             // Start the timer controler
             TimersControlCenter.Active = new TimersControlCenter();
+
         }
 
         private void LoadLastStates()

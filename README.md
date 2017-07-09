@@ -5,15 +5,15 @@ This project is what I use at my place to control several relays via a Web serve
 
 Features:
 - Relay control
+- Timed relay control
 
 Planned features:
-- Lights control (MiLight bridge)
 - YouTube Playlist
 - Alarm clock
 - Voice control (probably going with Cortana for this one)
 
 Currently working on:
-- Timed relay control
+- Lights control (MiLight bridge)
 
 Planned for later (if someone else wants to help with this project):
 - Plugins (for example instead of a static MiLight bridge controller, use a plugin instead)
@@ -21,9 +21,17 @@ Planned for later (if someone else wants to help with this project):
 - Embedded remote control for desktop (mouse, window view, cmd line, shutdown/sleep/etc..)
 - Add/Remove relays in the webpage instead of statically in the code
 
-Don't expect the commits to be very detailed.
 
+Notes:
+MiLight combo-mode is a way to use two MiLight receivers (groups) to control both the RGB and W at the same time.
+
+
+Libraries/NuGet packages used:
+
+	[MIT License]
+	Metro UI CSS, JQuery, Restup, sqlite-net-pcl, SQLite for Universal Windows Platform, Font Awesome, datetimepicker by Chupurnov Valeriy, iro.js
+
+Don't expect the commits to be very detailed.
+Want to collaborate? Just send me a message using the website below!
 
 Author: Mywk @ www.TechCoders.Net © 2017
-
-Libraries/nuget packages used: Metro UI CSS, JQuery, Restup, sqlite-net-pcl, SQLite for Universal Windows Platform, Font Awesome, datetimepicker by Chupurnov Valeriy

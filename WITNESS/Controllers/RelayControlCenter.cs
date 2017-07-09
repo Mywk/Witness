@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Gpio;
 
-namespace WITNESS
+namespace WITNESS.Controllers
 {
     public sealed class RelayControlCenter
     {
@@ -18,15 +18,16 @@ namespace WITNESS
 
         public bool SetPower(int id, bool state, bool writeToDatabase)
         {
-            var relay = Database.Active.GetConnection().Table<DatabaseModel.Relay>().Where(t => t.Id == id).ToList();
-            if (relay.Count > 0)
+            var relay = Database.Active.GetConnection().Table<DatabaseModel.Relay>().Where(t => t.Id == id).FirstOrDefault();
+
+            if (relay != null)
             {
-                if(GpioControlCenter.Active.SetGpio(relay[0].Gpio, state))
+                if (GpioControlCenter.Active.SetGpio(relay.Gpio, state))
                 {
                     if (writeToDatabase)
                     {
-                        relay[0].LastState = state;
-                        Database.Active.GetConnection().Update(relay[0]);
+                        relay.LastState = state;
+                        Database.Active.GetConnection().Update(relay);
                     }
                     return true;
                 }
