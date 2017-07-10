@@ -6,14 +6,14 @@ This project is what I use at my place to control several relays via a Web serve
 Features:
 - Relay control
 - Timed relay control
+- Lights control (MiLight bridge)
 
 Planned features:
 - YouTube Playlist
-- Alarm clock
 - Voice control (probably going with Cortana for this one)
 
 Currently working on:
-- Lights control (MiLight bridge)
+- Alarm clock
 
 Planned for later (if someone else wants to help with this project):
 - Plugins (for example instead of a static MiLight bridge controller, use a plugin instead)
@@ -23,7 +23,7 @@ Planned for later (if someone else wants to help with this project):
 
 
 Notes:
-MiLight combo-mode is a way to use two MiLight receivers (groups) to control both the RGB and W at the same time.
+MiLight combo-mode is a way to use two MiLight receivers (groups) to control both the RGB and W at the same time, it works by setting the first receiver with the Red->Red and Green->Green and the second one with Blue->Blue White->Green. 
 
 
 Libraries/NuGet packages used:
