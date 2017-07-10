@@ -25,18 +25,18 @@
                     var t = $('#lightsData').DataTable();
                     var checkbox = `<label class="switch-original">
                             <input id="light_`+ relay[0] + `" type="checkbox" ` + (relay[5] == true ? "checked=\"checked\"" : "") + `>
-                                <span class="check" onclick="switchLight`+ ((relay[6] == true) ? "Combo" : "") +`(`+ relay[0] + `,!$('#light_`+ relay[0] + `').is(':checked'));"></span>
+                                <span class="check" onclick="switchLight`+ ((relay[6] == true) ? "Combo" : "") + `(` + relay[0] + `,!$('#light_` + relay[0] + `').is(':checked'));"></span>
                         </label>`;
                     var brightness = `<div id="brightness_` + relay[0] + `" class="slider"
                     data-on-change="dropValueToInput"
                     data-role="slider"
-                    data-max-value="27"
-                    data-position="`+ relay[3] +`"
-                    data-min-value="2" ></div>
+                    data-max-value="270"
+                    data-position="`+ relay[3] + `"
+                    data-min-value="20" ></div>
                     <div class="input-control text" style="display: none;">
-                            <input id="slider_brightness_` + relay[0] + `" value="`+ relay[3] +`">
+                            <input id="slider_brightness_` + relay[0] + `" value="` + relay[3] + `">
                     </div>`;
-                    var color = `<div id="color_` + relay[0] + `" onclick="alert('Not implemented!');"></div>`; // relay[4]
+                    var color = `<div id="color_` + relay[0] + `" onmouseup="setLightColor(` + relay[0] + `);"></div>`; // relay[4]
                     t.row.add([
                         relay[0] + ((relay[6] == true) ? "[C]" : ""),
                         relay[1],
@@ -72,6 +72,21 @@
         xmlHttp.send();
     };
 
+    function setLightColor(id) {
+
+        colorPickers.forEach(function (colorPicker) {
+
+            if (colorPicker.data_id == id) {
+
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.open("GET", "/api/light/color/" + id + "/" + colorPicker.color.hsl.h + "/" + colorPicker.color.hsl.s + "/" + colorPicker.color.hsl.l, true);
+                xmlHttp.send();
+                return;
+
+            }
+        });
+    }
+
     function switchLightCombo(id, status) {
         switchLight(id, status, true);
     }
@@ -86,7 +101,7 @@
     function setBrightness(id, value) {
 
         var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("GET", "/api/light/brightness/" + id + "/" + value, true);
+        xmlHttp.open("GET", "/api/light/brightness/" + id + "/" + parseInt(value / 10, 10), true);
         xmlHttp.send();
 
     };

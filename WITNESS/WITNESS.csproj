@@ -165,7 +165,6 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png">
       <InProject>false</InProject>
     </Content>
-    <Content Include="web\css\metro-colors.css" />
     <Content Include="web\css\metro-colors.min.css" />
     <Content Include="web\css\metro-icons.min.css" />
     <Content Include="web\css\metro-responsive.min.css" />

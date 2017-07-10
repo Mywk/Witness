@@ -93,14 +93,14 @@ namespace WITNESS.RestControllers
                         if (combos.Count > 0)
                         {
                             if (foundCombos.ContainsKey(group.Id) || foundCombos.ContainsValue(group.Id))
-                                list.Add(new object[] { combos[0].Id,  group.BridgeId, combos[0].Name, combos[0].Brightness, combos[0].Color, combos[0].LastState, true });
+                                list.Add(new object[] { combos[0].Id,  group.BridgeId, combos[0].Name, combos[0].Brightness * 10, combos[0].Color, combos[0].LastState, true });
                             else
                                 foundCombos.Add(combos[0].FirstGroupId, combos[0].SecondGroupId);
                             continue;
                         }
                         else
                         {
-                            list.Add(new object[] { group.Id, group.BridgeId, group.Name, group.Brightness, group.Color, group.LastState, false });
+                            list.Add(new object[] { group.Id, group.BridgeId, group.Name, group.Brightness * 10, group.Color, group.LastState, false });
                         }
                     }
                 }

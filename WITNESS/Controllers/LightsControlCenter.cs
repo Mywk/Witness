@@ -40,6 +40,23 @@ namespace WITNESS.Controllers
             return null;
         }
 
+        public int SetGroupToWhite(int groupType)
+        {
+            switch ((Milight.Enums.GroupType)groupType)
+            {
+                case Milight.Enums.GroupType.One:
+                    return (int)Milight.Enums.Command.SetToWhiteGroup1;
+                case Milight.Enums.GroupType.Two:
+                    return (int)Milight.Enums.Command.SetToWhiteGroup2;
+                case Milight.Enums.GroupType.Three:
+                    return (int)Milight.Enums.Command.SetToWhiteGroup3;
+                case Milight.Enums.GroupType.Four:
+                    return (int)Milight.Enums.Command.SetToWhiteGroup4;
+                default:
+                    return 0;
+            }
+        }
+
         public bool SetLight(int id, bool state)
         {
             Bridge bridge = GetBridgeByGroupId(id);
@@ -85,13 +102,14 @@ namespace WITNESS.Controllers
         }
 
         // We need to prevent the Brightness to be set over and over again
-        private DateTime lastBrightnessRequest;
+        private DateTime lastRequest;
         private Timer brightnessRequestTimer = null;
+        private Timer colorRequestTimer = null;
 
         public bool SetBrightness(int id, int val)
         {
-            lastBrightnessRequest = DateTime.UtcNow;
-            if(brightnessRequestTimer == null)
+            lastRequest = DateTime.UtcNow;
+            if (brightnessRequestTimer == null)
             {
                 brightnessRequestTimer = new Timer(SetBrightnessCallback, new object[] { id, val }, 1500, 1500);
             }
@@ -99,18 +117,57 @@ namespace WITNESS.Controllers
             return true;
         }
 
+        public bool SetColor(int id, int h, int s, int l)
+        {
+            lastRequest = DateTime.UtcNow;
+            if (colorRequestTimer == null)
+            {
+                int val = 0;
+                if (l > 88) // It's white
+                    val = -1;
+                else
+                {
+                    int angle = h + 110;
+                    if (angle > 360)
+                        angle = angle - 360;
+                    angle = (360 - angle);
+
+
+                    val = (int)Math.Round(angle * 0.7084);
+                }
+                colorRequestTimer = new Timer(SetColorCallback, new object[] { id, val}, 1500, 1500);
+            }
+
+            return true;
+        }
+
         private void SetBrightnessCallback(object state)
         {
-            if (DateTime.UtcNow >= (lastBrightnessRequest + TimeSpan.FromMilliseconds(1200))) {
+            if (DateTime.UtcNow >= (lastRequest + TimeSpan.FromMilliseconds(1200)))
+            {
                 object[] data = (object[])state;
-                SetBrightness((int)data[0], (int)data[1], false);
+                SetColorOrBrightness((int)data[0], (int)data[1], (int)Milight.Enums.Command.RGBWBrightness, false);
 
-                brightnessRequestTimer.Dispose();
+                if(brightnessRequestTimer != null)
+                    brightnessRequestTimer.Dispose();
                 brightnessRequestTimer = null;
             }
         }
 
-        public bool SetBrightness(int id, int val, bool ignoreCombo)
+        private void SetColorCallback(object state)
+        {
+            if (DateTime.UtcNow >= (lastRequest + TimeSpan.FromMilliseconds(1200)))
+            {
+                object[] data = (object[])state;
+                SetColorOrBrightness((int)data[0], (int)data[1], (int)Milight.Enums.Command.RGBWColor, false);
+
+                if(colorRequestTimer != null)
+                    colorRequestTimer.Dispose();
+                colorRequestTimer = null;
+            }
+        }
+
+        public bool SetColorOrBrightness(int id, int val, int type, bool ignoreCombo)
         {
             Bridge bridge = GetBridgeByGroupId(id);
             if (bridge != null)
@@ -120,8 +177,18 @@ namespace WITNESS.Controllers
                     combo = Database.Active.GetConnection().Table<DatabaseModel.MilightCombo>().Where(c => c.FirstGroupId == id || c.SecondGroupId == id).FirstOrDefault();
                 if (combo != null)
                 {
-                    SetBrightness(combo.FirstGroupId, val, true);
-                    SetBrightness(combo.SecondGroupId, val, true);
+                    int val1 = val, val2 = val;
+                    if ((int)Milight.Enums.Command.RGBWColor == type)
+                    {
+                        if(val == -1) // It's white!!
+                        {
+                            val1 = 133;
+                            val2 = 47;
+                        }
+                    }
+
+                    SetColorOrBrightness(combo.FirstGroupId, val1, type, true);
+                    SetColorOrBrightness(combo.SecondGroupId, val2, type, true);
 
                     combo.LastState = true;
                     Database.Active.GetConnection().Update(combo);
@@ -135,7 +202,10 @@ namespace WITNESS.Controllers
                         SetLight(group.Id, true);
                         Task.Run(async () => {
 
-                            await bridge.SendCommandAsync(Milight.Enums.Command.RGBWBrightness, (byte)val);
+                            if ((int)Milight.Enums.Command.RGBWColor == type && val == -1)
+                                await bridge.SendCommandAsync((Milight.Enums.Command)SetGroupToWhite((int)group.GroupType));
+                            else
+                                await bridge.SendCommandAsync((Milight.Enums.Command)type, (byte)val);
 
                         }).Wait();
 

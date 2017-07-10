@@ -31,5 +31,11 @@ namespace WITNESS.RestControllers
         {
             return Common.RestGetResponse(LightsControlCenter.Active.SetBrightness(id, val), new List<object> { id.ToString(), val.ToString() });
         }
+
+        [UriFormat("/light/color/{id}/{h}/{s}/{l}")]
+        public IGetResponse SetColor(int id, int h, int s, int l)
+        {
+            return Common.RestGetResponse(LightsControlCenter.Active.SetColor(id, h, s, l), new List<object> { id.ToString(), h.ToString(), s.ToString(), l.ToString() });
+        }
     }
 }

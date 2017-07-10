@@ -8,27 +8,6 @@ namespace WITNESS.Milight
 {
     class Enums
     {
-        public enum Colors
-        {
-            Violet = 0x00,
-            RoyalBlue = 0x10,
-            LightSkyBlue = 0x20,
-            Aqua = 0x30,
-            MediumAquamarine = 0x40,
-            SeaGreen = 0x50,
-            Green = 0x60,
-            LimeGreen = 0x70,
-            Yellow = 0x80,
-            LightSalmon = 0x90,
-            Orange = 0xA0,
-            Red = 0xB0,
-            Pink = 0xC0,
-            MediumOrchid = 0xD0,
-            MediumPurple = 0xE0,
-            Lavender = 0xF0,
-            White = 0x00
-        }
-
         public enum Type
         {
             Normal,

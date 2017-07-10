@@ -45,7 +45,7 @@
     function openTimerSettings(id) {
 
         var name = "";
-        var t = $('#powerData').DataTable();
+        var t = getTimersDataTable(true);
         t.rows().data().each(function (value, index) {
             if (value[0] == id)
                 name = value[1];
